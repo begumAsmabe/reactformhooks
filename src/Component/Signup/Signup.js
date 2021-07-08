@@ -2,7 +2,6 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { useState } from "react";
 import axios from 'axios'
 const schema = yup.object().shape({
     first_name:yup
@@ -29,7 +28,10 @@ const schema = yup.object().shape({
       "Password must contain at least 8 characters, one uppercase, one number and one special case character"
     ),
    phone:yup
-   .number(),
+   .number()
+   .required("Phone number is required")
+   .min(9,"Should contain 9 digits"),
+
   country_code:yup
   .number()
          
@@ -38,63 +40,34 @@ const schema = yup.object().shape({
 export default function Signup(){
     
     
-    const { register, formState: { errors }, handleSubmit } = useForm(
+    const {  register, formState: { errors }, handleSubmit } = useForm(
         {
             resolver: yupResolver(schema)}
     );
-    // const [values, setValues] = useState({})
-    // const saveFormData = async (values) => {
-    //   test = {
-    //     "country_code": 23,
-    //     "phone": 859207845456,
-    //     "password": "A@qwertyuhgfdsaq1A",
-    //     "email": "drfj@j.com",
-    //     "username": "hhjhkoder",
-    //     "last_name": "Begum",
-    //     "first_name": "Asma",
-    //     "timezone": "America/New_York",
-    //     "captcha": true
-    // }
-        // const response = await fetch('http://134.209.148.76:2000/api/v3/sign-up/fan', {
-        //   method: 'POST',
-        //   body: JSON.stringify(test)
+    
+     
         
-        // });
-      //   console.log(response,"-------------------------------------------------------------")
-      //   if (response.status !== 200) {
-      //     throw new Error(`Request failed: ${response.status}`); 
-      //   }
-      // }
     const onSubmit =  (event) => {
-        console.log(event,"///////////////////////////////////");
-        // event.preventDefault(); // Prevent default submission this function not reuired
-        
-          
-          // await saveFormData({...event,"captcha":true});
-        //   alert('Your registration was successfully submitted!');
-        //   fetch('http://134.209.148.76:2000/api/v3/sign-up/talent',{
-        //     method:'POST',
-            // We convert the React state to JSON and send it as the POST body
-        // body: JSON.stringify(event)
-        //   }).then(function(response) {
-        //     console.log(response)
-        //     return response.json();
-        //   });
-           axios({
-               method:"post",
-               url:"http://134.209.148.76:2000/api/v3/sign-up/talent",
+                      event.captcha=true;
+        console.log(JSON.stringify(event),"///////////////////////////////////");
+       
+           axios.post('http://134.209.148.76:2000/api/v3/sign-up/talent',{event}, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
                
-               headers:{"Content-Type": "multipart/form-data"}
-
-           }).then(function(response){
+            .then(function(response){
                console.log(response.data)
+               
+               
            }).catch(function(error){
                console.log(error);
            })
           
       }
 
-        // const onSubmit = handleSubmit(data => console.log(data));
+       
         return (
             <>       
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -177,7 +150,7 @@ export default function Signup(){
                     </div>
                 </div>
 
-                <button type="submit" className="btn btn-success btn-lg col-md-12 text-center" style={{borderRadius:"50px"}}>Sign Up</button>
+                <button type="submit"  className="btn btn-success btn-lg col-md-12 text-center" style={{borderRadius:"50px"}}>Sign Up</button>
                 
             </form>
             <p className="forgot-password text-right text-center"style={{textAlign:"center"}}>
